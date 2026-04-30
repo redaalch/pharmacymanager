@@ -1,62 +1,52 @@
-import { Card } from "@mantine/core";
-import type { FormEvent } from "react";
-import { MedicineFilters } from "../components/medicines/MedicineFilters";
+import { Alert, Card, Center, Loader, Stack, Text } from "@mantine/core";
+import { AlertTriangle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ApiError, type Medicament } from "../api";
+import { MedicineFilters, type MedicineStatusFilter } from "../components/medicines/MedicineFilters";
 import { MedicineForm } from "../components/medicines/MedicineForm";
 import { MedicinesTable } from "../components/medicines/MedicinesTable";
 import { PageHeader } from "../components/PageHeader";
-import type { Category, Medicine, MedicineDraft } from "../data/pharmacy";
-import { getCategoryName, stockStatus } from "../utils/pharmacy";
+import { useCategories } from "../hooks/useCategories";
+import { useDeleteMedicament, useMedicaments } from "../hooks/useMedicaments";
+import { stockStatus } from "../utils/medicament";
 
-type MedicinesPageProps = {
-  categories: Category[];
-  medicines: Medicine[];
-  search: string;
-  status: string;
-  category: string;
-  draft: MedicineDraft;
-  editingMedicineId: string | null;
-  onSearchChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
-  onCategoryChange: (value: string) => void;
-  onDraftChange: (draft: MedicineDraft) => void;
-  onSave: (event: FormEvent<HTMLFormElement>) => void;
-  onEdit: (medicine: Medicine) => void;
-  onArchive: (medicineId: string) => void;
-  onCancelEdit: () => void;
-};
+export function MedicinesPage() {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState<number | "all">("all");
+  const [status, setStatus] = useState<MedicineStatusFilter>("all");
+  const [editing, setEditing] = useState<Medicament | null>(null);
 
-export function MedicinesPage({
-  categories,
-  medicines,
-  search,
-  status,
-  category,
-  draft,
-  editingMedicineId,
-  onSearchChange,
-  onStatusChange,
-  onCategoryChange,
-  onDraftChange,
-  onSave,
-  onEdit,
-  onArchive,
-  onCancelEdit,
-}: MedicinesPageProps) {
-  const filteredMedicines = medicines.filter((medicine) => {
-    const normalized = search.trim().toLowerCase();
-    const matchesSearch =
-      !normalized ||
-      medicine.name.toLowerCase().includes(normalized) ||
-      medicine.dci.toLowerCase().includes(normalized) ||
-      getCategoryName(categories, medicine.categoryId).toLowerCase().includes(normalized);
-    const matchesCategory = category === "all" || medicine.categoryId === category;
-    const matchesStatus = status === "all" || stockStatus(medicine) === status;
-    return matchesSearch && matchesCategory && matchesStatus;
+  const categoriesQuery = useCategories();
+  const medicamentsQuery = useMedicaments({
+    search: search.trim() || undefined,
+    categorie: category === "all" ? undefined : category,
   });
+  const deleteMutation = useDeleteMedicament();
+
+  const categories = categoriesQuery.data?.results ?? [];
+  const allResults = medicamentsQuery.data?.results ?? [];
+
+  const filtered = useMemo(() => {
+    if (status === "all") return allResults;
+    return allResults.filter((m) => stockStatus(m) === status);
+  }, [allResults, status]);
+
+  function handleArchive(id: number) {
+    if (!confirm("Archiver ce médicament ?")) return;
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        if (editing?.id === id) setEditing(null);
+      },
+    });
+  }
 
   return (
     <>
-      <PageHeader eyebrow="Catalogue" title="Gestion des médicaments" description="Liste, filtres, ajout et modification du stock en local." />
+      <PageHeader
+        eyebrow="Catalogue"
+        title="Gestion des médicaments"
+        description="Liste, filtres, ajout et modification synchronisés avec l'API."
+      />
 
       <div className="medicines-layout">
         <Card withBorder radius="md" padding={0} shadow="sm">
@@ -65,20 +55,53 @@ export function MedicinesPage({
             search={search}
             category={category}
             status={status}
-            onSearchChange={onSearchChange}
-            onCategoryChange={onCategoryChange}
-            onStatusChange={onStatusChange}
+            onSearchChange={setSearch}
+            onCategoryChange={setCategory}
+            onStatusChange={setStatus}
           />
-          <MedicinesTable categories={categories} medicines={filteredMedicines} onEdit={onEdit} onArchive={onArchive} />
+
+          {medicamentsQuery.isLoading && (
+            <Center p="xl">
+              <Loader />
+            </Center>
+          )}
+
+          {medicamentsQuery.isError && (
+            <Alert color="red" icon={<AlertTriangle size={18} />} m="md" title="Erreur de chargement">
+              {(medicamentsQuery.error as ApiError).message}
+            </Alert>
+          )}
+
+          {medicamentsQuery.isSuccess && filtered.length === 0 && (
+            <Stack p="xl" align="center" gap={4}>
+              <Text fw={600}>Aucun médicament trouvé.</Text>
+              <Text size="sm" c="dimmed">
+                Ajustez les filtres ou ajoutez un nouveau médicament.
+              </Text>
+            </Stack>
+          )}
+
+          {medicamentsQuery.isSuccess && filtered.length > 0 && (
+            <MedicinesTable
+              medicines={filtered}
+              onEdit={setEditing}
+              onArchive={handleArchive}
+              archiving={deleteMutation.isPending ? deleteMutation.variables ?? null : null}
+            />
+          )}
+
+          {deleteMutation.isError && (
+            <Alert color="red" icon={<AlertTriangle size={18} />} m="md">
+              {(deleteMutation.error as ApiError).message}
+            </Alert>
+          )}
         </Card>
 
         <MedicineForm
           categories={categories}
-          draft={draft}
-          editing={Boolean(editingMedicineId)}
-          onDraftChange={onDraftChange}
-          onSave={onSave}
-          onCancel={onCancelEdit}
+          editing={editing}
+          onCancel={() => setEditing(null)}
+          onSuccess={() => setEditing(null)}
         />
       </div>
     </>

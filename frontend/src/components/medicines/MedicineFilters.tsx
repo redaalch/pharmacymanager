@@ -1,15 +1,18 @@
 import { Group, Select, TextInput } from "@mantine/core";
 import { Search } from "lucide-react";
-import type { Category } from "../../data/pharmacy";
+import type { Categorie } from "../../api";
+import type { StockStatus } from "../../utils/medicament";
+
+export type MedicineStatusFilter = "all" | StockStatus;
 
 type MedicineFiltersProps = {
-  categories: Category[];
+  categories: Categorie[];
   search: string;
-  category: string;
-  status: string;
+  category: number | "all";
+  status: MedicineStatusFilter;
   onSearchChange: (value: string) => void;
-  onCategoryChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onCategoryChange: (value: number | "all") => void;
+  onStatusChange: (value: MedicineStatusFilter) => void;
 };
 
 export function MedicineFilters({
@@ -31,13 +34,16 @@ export function MedicineFilters({
         className="toolbar-search"
       />
       <Select
-        value={category}
-        onChange={(value) => onCategoryChange(value ?? "all")}
-        data={[{ value: "all", label: "Toutes les catégories" }, ...categories.map((item) => ({ value: item.id, label: item.name }))]}
+        value={category === "all" ? "all" : String(category)}
+        onChange={(value) => onCategoryChange(value === "all" || value === null ? "all" : Number(value))}
+        data={[
+          { value: "all", label: "Toutes les catégories" },
+          ...categories.map((item) => ({ value: String(item.id), label: item.nom })),
+        ]}
       />
       <Select
         value={status}
-        onChange={(value) => onStatusChange(value ?? "all")}
+        onChange={(value) => onStatusChange((value as MedicineStatusFilter) ?? "all")}
         data={[
           { value: "all", label: "Tous les statuts" },
           { value: "ok", label: "En stock" },

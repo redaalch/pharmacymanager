@@ -33,25 +33,7 @@ export default function App() {
         />
       )}
 
-      {pharmacy.page === "medicines" && (
-        <MedicinesPage
-          categories={pharmacy.categories}
-          medicines={pharmacy.activeMedicines}
-          search={pharmacy.medicineSearch}
-          status={pharmacy.medicineStatus}
-          category={pharmacy.medicineCategory}
-          draft={pharmacy.medicineDraft}
-          editingMedicineId={pharmacy.editingMedicineId}
-          onSearchChange={pharmacy.setMedicineSearch}
-          onStatusChange={pharmacy.setMedicineStatus}
-          onCategoryChange={pharmacy.setMedicineCategory}
-          onDraftChange={pharmacy.setMedicineDraft}
-          onSave={pharmacy.handleSaveMedicine}
-          onEdit={pharmacy.handleEditMedicine}
-          onArchive={pharmacy.handleArchiveMedicine}
-          onCancelEdit={pharmacy.handleCancelMedicineEdit}
-        />
-      )}
+      {pharmacy.page === "medicines" && <MedicinesPage />}
 
       {pharmacy.page === "sales" && (
         <SalesPage
@@ -73,9 +55,7 @@ export default function App() {
       )}
 
       {pharmacy.page === "categories" && <CategoriesPage />}
-      {pharmacy.page === "alerts" && (
-        <AlertsPage lowStock={pharmacy.lowStock} expiringSoon={pharmacy.expiringSoon} categories={pharmacy.categories} onEditMedicine={pharmacy.handleEditMedicine} />
-      )}
+      {pharmacy.page === "alerts" && <AlertsPage />}
       {pharmacy.page === "settings" && <SettingsPage onReset={pharmacy.resetDemoData} medicines={pharmacy.activeMedicines} sales={pharmacy.sales} />}
     </AppLayout>
   );
