@@ -49,5 +49,5 @@ class Medicament(models.Model):
         return f"{self.nom} ({self.dosage})"
 
     @property
-    def stock_bas(self) -> bool:
+    def est_en_alerte(self) -> bool:
         return self.stock_actuel <= self.stock_minimum

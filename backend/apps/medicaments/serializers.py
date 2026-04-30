@@ -14,7 +14,7 @@ class MedicamentSerializer(serializers.ModelSerializer):
         queryset=Categorie.objects.all(),
         write_only=True,
     )
-    stock_bas = serializers.BooleanField(read_only=True)
+    est_en_alerte = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Medicament
@@ -23,11 +23,11 @@ class MedicamentSerializer(serializers.ModelSerializer):
             "categorie", "categorie_id",
             "forme", "dosage",
             "prix_achat", "prix_vente",
-            "stock_actuel", "stock_minimum", "stock_bas",
+            "stock_actuel", "stock_minimum", "est_en_alerte",
             "date_expiration", "ordonnance_requise",
             "date_creation", "est_actif",
         ]
-        read_only_fields = ["id", "date_creation", "est_actif", "stock_bas"]
+        read_only_fields = ["id", "date_creation", "est_actif", "est_en_alerte"]
 
     def validate_prix_vente(self, value):
         prix_achat = self.initial_data.get("prix_achat")
