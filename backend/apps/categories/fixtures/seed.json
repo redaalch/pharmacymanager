@@ -1,0 +1,49 @@
+[
+{
+  "model": "categories.categorie",
+  "pk": 1,
+  "fields": {
+    "nom": "Antibiotique",
+    "description": "Anti-bactériens",
+    "date_creation": "2026-04-30T11:22:02.207Z"
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 1,
+  "fields": {
+    "nom": "Amoxicilline",
+    "dci": "Amoxicilline",
+    "categorie": 1,
+    "forme": "comprimé",
+    "dosage": "500mg",
+    "prix_achat": "10.00",
+    "prix_vente": "15.00",
+    "stock_actuel": 3,
+    "stock_minimum": 10,
+    "date_expiration": "2027-01-01",
+    "ordonnance_requise": true,
+    "date_creation": "2026-04-30T11:27:21.136Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 2,
+  "fields": {
+    "nom": "Amoxicilline",
+    "dci": "Amoxicilline",
+    "categorie": 1,
+    "forme": "comprimé",
+    "dosage": "500mg",
+    "prix_achat": "10.00",
+    "prix_vente": "15.00",
+    "stock_actuel": 3,
+    "stock_minimum": 10,
+    "date_expiration": "2027-01-01",
+    "ordonnance_requise": true,
+    "date_creation": "2026-04-30T11:28:18.583Z",
+    "est_actif": true
+  }
+}
+]
