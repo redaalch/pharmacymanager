@@ -1,8 +1,19 @@
 import { createRoot } from "react-dom/client";
 import { MantineProvider, createTheme } from "@mantine/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@mantine/core/styles.css";
 import App from "./App";
 import "./styles/app.css";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 30_000,
+    },
+  },
+});
 
 const theme = createTheme({
   primaryColor: "teal",
@@ -25,7 +36,9 @@ const theme = createTheme({
 });
 
 createRoot(document.getElementById("root")!).render(
-  <MantineProvider theme={theme} defaultColorScheme="light">
-    <App />
-  </MantineProvider>,
+  <QueryClientProvider client={queryClient}>
+    <MantineProvider theme={theme} defaultColorScheme="light">
+      <App />
+    </MantineProvider>
+  </QueryClientProvider>,
 );
