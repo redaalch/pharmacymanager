@@ -12,7 +12,7 @@ export type CartLine = {
   sousTotal: number;
 };
 
-type SaleSummaryProps = {
+type VenteSummaryProps = {
   cart: CartLine[];
   notes: string;
   total: number;
@@ -22,7 +22,7 @@ type SaleSummaryProps = {
   onCompleteSale: () => void;
 };
 
-export function SaleSummary({
+export function VenteSummary({
   cart,
   notes,
   total,
@@ -30,7 +30,7 @@ export function SaleSummary({
   error,
   onNotesChange,
   onCompleteSale,
-}: SaleSummaryProps) {
+}: VenteSummaryProps) {
   const isEmpty = cart.length === 0;
 
   return (

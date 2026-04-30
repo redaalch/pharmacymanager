@@ -3,19 +3,19 @@ import { Search } from "lucide-react";
 import type { Categorie } from "../../api";
 import type { StockStatus } from "../../utils/medicament";
 
-export type MedicineStatusFilter = "all" | StockStatus;
+export type MedicamentStatusFilter = "all" | StockStatus;
 
-type MedicineFiltersProps = {
+type MedicamentFiltersProps = {
   categories: Categorie[];
   search: string;
   category: number | "all";
-  status: MedicineStatusFilter;
+  status: MedicamentStatusFilter;
   onSearchChange: (value: string) => void;
   onCategoryChange: (value: number | "all") => void;
-  onStatusChange: (value: MedicineStatusFilter) => void;
+  onStatusChange: (value: MedicamentStatusFilter) => void;
 };
 
-export function MedicineFilters({
+export function MedicamentFilters({
   categories,
   search,
   category,
@@ -23,7 +23,7 @@ export function MedicineFilters({
   onSearchChange,
   onCategoryChange,
   onStatusChange,
-}: MedicineFiltersProps) {
+}: MedicamentFiltersProps) {
   return (
     <Group p="md" gap="sm" wrap="wrap">
       <TextInput
@@ -43,7 +43,7 @@ export function MedicineFilters({
       />
       <Select
         value={status}
-        onChange={(value) => onStatusChange((value as MedicineStatusFilter) ?? "all")}
+        onChange={(value) => onStatusChange((value as MedicamentStatusFilter) ?? "all")}
         data={[
           { value: "all", label: "Tous les statuts" },
           { value: "ok", label: "En stock" },

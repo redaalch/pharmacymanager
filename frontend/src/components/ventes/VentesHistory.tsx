@@ -17,7 +17,7 @@ const STATUT_BADGE: Record<VenteStatut, string> = {
   annulee: "Annulée",
 };
 
-type SalesHistoryProps = {
+type VentesHistoryProps = {
   sales: Vente[];
   isLoading: boolean;
   isError: boolean;
@@ -26,7 +26,7 @@ type SalesHistoryProps = {
   onCancelSale: (saleId: number) => void;
 };
 
-export function SalesHistory({ sales, isLoading, isError, error, cancelling, onCancelSale }: SalesHistoryProps) {
+export function VentesHistory({ sales, isLoading, isError, error, cancelling, onCancelSale }: VentesHistoryProps) {
   return (
     <Card withBorder radius="md" padding="lg" shadow="sm">
       <PanelTitle icon={<ShoppingCart size={20} />} title="Historique des ventes" />

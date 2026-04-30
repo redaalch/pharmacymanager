@@ -3,13 +3,13 @@ import { AlertTriangle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ApiError } from "../api";
 import { PageHeader } from "../components/PageHeader";
-import { SaleMedicinePicker } from "../components/sales/SaleMedicinePicker";
-import { SaleSummary, type CartLine } from "../components/sales/SaleSummary";
-import { SalesHistory } from "../components/sales/SalesHistory";
+import { VenteMedicamentPicker } from "../components/ventes/VenteMedicamentPicker";
+import { VenteSummary, type CartLine } from "../components/ventes/VenteSummary";
+import { VentesHistory } from "../components/ventes/VentesHistory";
 import { useMedicaments } from "../hooks/useMedicaments";
 import { useAnnulerVente, useCreateVente, useVentes } from "../hooks/useVentes";
 
-export function SalesPage() {
+export function VentesPage() {
   const [search, setSearch] = useState("");
   const [notes, setNotes] = useState("");
   const [quantities, setQuantities] = useState<Map<number, number>>(new Map());
@@ -95,14 +95,14 @@ export function SalesPage() {
       )}
 
       <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md" mb="md">
-        <SaleMedicinePicker
+        <VenteMedicamentPicker
           medicines={medicaments}
           search={search}
           quantities={quantities}
           onSearchChange={setSearch}
           onQuantityChange={handleQuantityChange}
         />
-        <SaleSummary
+        <VenteSummary
           cart={cart}
           notes={notes}
           total={total}
@@ -113,7 +113,7 @@ export function SalesPage() {
         />
       </SimpleGrid>
 
-      <SalesHistory
+      <VentesHistory
         sales={sales}
         isLoading={ventesQuery.isLoading}
         isError={ventesQuery.isError}

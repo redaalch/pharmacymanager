@@ -4,7 +4,7 @@ import type { Medicament } from "../../api";
 import { formatCurrency } from "../../utils/format";
 import { PanelTitle } from "./PanelTitle";
 
-type SaleMedicinePickerProps = {
+type VenteMedicamentPickerProps = {
   medicines: Medicament[];
   search: string;
   quantities: Map<number, number>;
@@ -12,13 +12,13 @@ type SaleMedicinePickerProps = {
   onQuantityChange: (medicineId: number, delta: number) => void;
 };
 
-export function SaleMedicinePicker({
+export function VenteMedicamentPicker({
   medicines,
   search,
   quantities,
   onSearchChange,
   onQuantityChange,
-}: SaleMedicinePickerProps) {
+}: VenteMedicamentPickerProps) {
   return (
     <Card withBorder radius="md" padding="lg" shadow="sm">
       <PanelTitle icon={<Pill size={20} />} title="Sélection des médicaments" />

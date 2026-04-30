@@ -2,18 +2,18 @@ import { Alert, Card, Center, Loader, Stack, Text } from "@mantine/core";
 import { AlertTriangle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ApiError, type Medicament } from "../api";
-import { MedicineFilters, type MedicineStatusFilter } from "../components/medicines/MedicineFilters";
-import { MedicineForm } from "../components/medicines/MedicineForm";
-import { MedicinesTable } from "../components/medicines/MedicinesTable";
+import { MedicamentFilters, type MedicamentStatusFilter } from "../components/medicaments/MedicamentFilters";
+import { MedicamentForm } from "../components/medicaments/MedicamentForm";
+import { MedicamentsTable } from "../components/medicaments/MedicamentsTable";
 import { PageHeader } from "../components/PageHeader";
 import { useCategories } from "../hooks/useCategories";
 import { useDeleteMedicament, useMedicaments } from "../hooks/useMedicaments";
 import { stockStatus } from "../utils/medicament";
 
-export function MedicinesPage() {
+export function MedicamentsPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<number | "all">("all");
-  const [status, setStatus] = useState<MedicineStatusFilter>("all");
+  const [status, setStatus] = useState<MedicamentStatusFilter>("all");
   const [editing, setEditing] = useState<Medicament | null>(null);
 
   const categoriesQuery = useCategories();
@@ -50,7 +50,7 @@ export function MedicinesPage() {
 
       <div className="medicines-layout">
         <Card withBorder radius="md" padding={0} shadow="sm">
-          <MedicineFilters
+          <MedicamentFilters
             categories={categories}
             search={search}
             category={category}
@@ -82,7 +82,7 @@ export function MedicinesPage() {
           )}
 
           {medicamentsQuery.isSuccess && filtered.length > 0 && (
-            <MedicinesTable
+            <MedicamentsTable
               medicines={filtered}
               onEdit={setEditing}
               onArchive={handleArchive}
@@ -97,7 +97,7 @@ export function MedicinesPage() {
           )}
         </Card>
 
-        <MedicineForm
+        <MedicamentForm
           categories={categories}
           editing={editing}
           onCancel={() => setEditing(null)}

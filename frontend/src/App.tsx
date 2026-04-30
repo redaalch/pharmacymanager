@@ -4,9 +4,9 @@ import type { Page } from "./config/navigation";
 import { AlertsPage } from "./pages/AlertsPage";
 import { CategoriesPage } from "./pages/CategoriesPage";
 import { DashboardPage } from "./pages/DashboardPage";
-import { MedicinesPage } from "./pages/MedicinesPage";
-import { SalesPage } from "./pages/SalesPage";
+import { MedicamentsPage } from "./pages/MedicamentsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { VentesPage } from "./pages/VentesPage";
 
 export default function App() {
   const [page, setPage] = useState<Page>("dashboard");
@@ -14,8 +14,8 @@ export default function App() {
   return (
     <AppLayout page={page} onPageChange={setPage}>
       {page === "dashboard" && <DashboardPage />}
-      {page === "medicines" && <MedicinesPage />}
-      {page === "sales" && <SalesPage />}
+      {page === "medicaments" && <MedicamentsPage />}
+      {page === "ventes" && <VentesPage />}
       {page === "categories" && <CategoriesPage />}
       {page === "alerts" && <AlertsPage />}
       {page === "settings" && <SettingsPage />}

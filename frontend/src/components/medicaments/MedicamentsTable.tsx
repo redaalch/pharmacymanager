@@ -4,14 +4,14 @@ import type { Medicament } from "../../api";
 import { stockStatus } from "../../utils/medicament";
 import { StatusBadge } from "../StatusBadge";
 
-type MedicinesTableProps = {
+type MedicamentsTableProps = {
   medicines: Medicament[];
   onEdit: (medicine: Medicament) => void;
   onArchive: (medicineId: number) => void;
   archiving?: number | null;
 };
 
-export function MedicinesTable({ medicines, onEdit, onArchive, archiving }: MedicinesTableProps) {
+export function MedicamentsTable({ medicines, onEdit, onArchive, archiving }: MedicamentsTableProps) {
   return (
     <Table.ScrollContainer minWidth={860}>
       <Table striped highlightOnHover>

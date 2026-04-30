@@ -55,11 +55,11 @@ export function AppLayout({ page, children, onPageChange }: AppLayoutProps) {
               {alertCount > 0 ? <span>{alertCount}</span> : null}
             </UnstyledButton>
             <Button
-              leftSection={page === "sales" ? <Pill size={17} /> : <ShoppingCart size={17} />}
-              onClick={() => navigate(page === "sales" ? "medicines" : "sales")}
+              leftSection={page === "ventes" ? <Pill size={17} /> : <ShoppingCart size={17} />}
+              onClick={() => navigate(page === "ventes" ? "medicaments" : "ventes")}
               visibleFrom="sm"
             >
-              {page === "sales" ? "Catalogue" : "Nouvelle vente"}
+              {page === "ventes" ? "Catalogue" : "Nouvelle vente"}
             </Button>
             <Group gap={6} visibleFrom="sm">
               <Avatar color="teal" radius="xl">
