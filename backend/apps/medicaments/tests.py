@@ -67,6 +67,9 @@ class MedicamentApiTests(APITestCase):
         ids = {item["id"] for item in response.data["results"]}
         self.assertIn(self.low_stock.id, ids)
         self.assertNotIn(self.normal_stock.id, ids)
+        alert_item = next(item for item in response.data["results"] if item["id"] == self.low_stock.id)
+        self.assertTrue(alert_item["est_en_alerte"])
+        self.assertNotIn("stock_bas", alert_item)
 
     def test_delete_is_soft_delete_and_excludes_from_default_queryset(self):
         response = self.client.delete(f"/api/v1/medicaments/{self.normal_stock.id}/")
