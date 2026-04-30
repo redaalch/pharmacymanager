@@ -13,6 +13,10 @@ multi-articles avec déduction atomique du stock, et des alertes de réapprovisi
 
 ## Structure du dépôt
 
+    pharmacymanager/
+    ├── backend/          # API Django REST
+    ├── frontend/         # Application React
+    └── docs/             # Brief technique et documents projet
 
 ## Pré-requis
 
@@ -22,7 +26,7 @@ multi-articles avec déduction atomique du stock, et des alertes de réapprovisi
 
 ## Installation Backend
 
-```bash
+~~~bash
 cd backend
 
 # 1. Environnement virtuel
@@ -48,3 +52,58 @@ python manage.py loaddata seed
 
 # 6. Lancer le serveur
 python manage.py runserver
+~~~
+
+L'API est disponible sur `http://127.0.0.1:8000/api/v1/`.
+La documentation Swagger est sur `http://127.0.0.1:8000/api/schema/swagger-ui/`.
+
+## Installation Frontend
+
+~~~bash
+cd frontend
+npm install
+cp .env.example .env              # configurer VITE_API_URL si besoin
+npm run dev
+~~~
+
+L'application est disponible sur `http://localhost:5173`.
+
+## Endpoints principaux
+
+| Méthode | Endpoint | Description |
+|---|---|---|
+| GET / POST | `/api/v1/categories/` | Liste / création de catégories |
+| GET / POST | `/api/v1/medicaments/` | Liste paginée / création de médicaments |
+| GET | `/api/v1/medicaments/alertes/` | Médicaments sous le seuil de stock |
+| DELETE | `/api/v1/medicaments/{id}/` | Soft delete (`est_actif=False`) |
+| GET / POST | `/api/v1/ventes/` | Historique / création d'une vente |
+| POST | `/api/v1/ventes/{id}/annuler/` | Annulation et réintégration du stock |
+
+Filtres pris en charge : `?categorie=`, `?ordonnance_requise=`, `?search=`,
+`?ordering=`, `?date_min=YYYY-MM-DD`, `?date_max=YYYY-MM-DD`.
+
+## Règles métier importantes
+
+- **Snapshot du prix** — `LigneVente.prix_unitaire` est figé au moment de la vente.
+- **Stock atomique** — la création de vente verrouille les médicaments
+  (`SELECT FOR UPDATE`) et déduit le stock dans une transaction.
+- **Soft delete** — médicaments et ventes ne sont jamais supprimés physiquement.
+- **Référence auto-générée** — format `VNT-YYYY-NNNN` par année.
+
+## Tests rapides (curl)
+
+~~~bash
+# Créer une catégorie
+curl -X POST http://127.0.0.1:8000/api/v1/categories/ \
+  -H "Content-Type: application/json" \
+  -d '{"nom":"Antibiotique","description":"Anti-bactériens"}'
+
+# Créer une vente
+curl -X POST http://127.0.0.1:8000/api/v1/ventes/ \
+  -H "Content-Type: application/json" \
+  -d '{"lignes":[{"medicament_id":1,"quantite":2}]}'
+~~~
+
+## Auteur
+
+Reda Alalach — test technique SMARTHOLOL, avril 2026.
