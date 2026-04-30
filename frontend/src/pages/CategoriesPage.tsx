@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Alert,
   Button,
   Card,
@@ -11,12 +12,17 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { AlertTriangle, LayoutGrid, Plus, Save } from "lucide-react";
+import { AlertTriangle, LayoutGrid, Pencil, Plus, Save, Trash2, X } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { ApiError } from "../api";
+import { ApiError, type Categorie } from "../api";
 import { PageHeader } from "../components/PageHeader";
 import { SectionTitle } from "../components/SectionTitle";
-import { useCategories, useCreateCategorie } from "../hooks/useCategories";
+import {
+  useCategories,
+  useCreateCategorie,
+  useDeleteCategorie,
+  useUpdateCategorie,
+} from "../hooks/useCategories";
 import { useMedicaments } from "../hooks/useMedicaments";
 
 const EMPTY_DRAFT = { nom: "", description: "" };
@@ -25,17 +31,48 @@ export function CategoriesPage() {
   const categoriesQuery = useCategories();
   const medicamentsQuery = useMedicaments();
   const createCategorie = useCreateCategorie();
+  const updateCategorie = useUpdateCategorie();
+  const deleteCategorie = useDeleteCategorie();
 
   const [draft, setDraft] = useState(EMPTY_DRAFT);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const isPending = createCategorie.isPending || updateCategorie.isPending;
+  const submitError = (createCategorie.error ?? updateCategorie.error) as ApiError | null;
+
+  function handleEdit(categorie: Categorie) {
+    setEditingId(categorie.id);
+    setDraft({ nom: categorie.nom, description: categorie.description });
+  }
+
+  function handleCancelEdit() {
+    setEditingId(null);
+    setDraft(EMPTY_DRAFT);
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!draft.nom.trim()) return;
-    createCategorie.mutate(
-      { nom: draft.nom.trim(), description: draft.description.trim() },
-      { onSuccess: () => setDraft(EMPTY_DRAFT) },
-    );
-  };
+    const payload = { nom: draft.nom.trim(), description: draft.description.trim() };
+    const onDone = () => {
+      setDraft(EMPTY_DRAFT);
+      setEditingId(null);
+    };
+    if (editingId !== null) {
+      updateCategorie.mutate({ id: editingId, data: payload }, { onSuccess: onDone });
+    } else {
+      createCategorie.mutate(payload, { onSuccess: onDone });
+    }
+  }
+
+  function handleDelete(categorie: Categorie, count: number) {
+    if (count > 0) {
+      alert(`Impossible : ${count} médicament(s) utilisent cette catégorie.`);
+      return;
+    }
+    if (!confirm(`Supprimer la catégorie "${categorie.nom}" ?`)) return;
+    deleteCategorie.mutate(categorie.id);
+  }
 
   const categories = categoriesQuery.data?.results ?? [];
   const medicaments = medicamentsQuery.data?.results ?? [];
@@ -73,12 +110,17 @@ export function CategoriesPage() {
           {categoriesQuery.isSuccess && categories.length > 0 && (
             <Stack>
               {categories.map((categorie) => {
-                const count = medicaments.filter(
-                  (medicament) => medicament.categorie.id === categorie.id,
-                ).length;
+                const count = medicaments.filter((m) => m.categorie?.id === categorie.id).length;
+                const isDeleting = deleteCategorie.isPending && deleteCategorie.variables === categorie.id;
                 return (
-                  <Group key={categorie.id} className="category-row" justify="space-between" wrap="nowrap">
-                    <div>
+                  <Group
+                    key={categorie.id}
+                    className="category-row"
+                    justify="space-between"
+                    wrap="nowrap"
+                    style={editingId === categorie.id ? { background: "#f1f5f9" } : undefined}
+                  >
+                    <div style={{ flex: 1 }}>
                       <Text fw={800}>{categorie.nom}</Text>
                       <Text size="sm" c="dimmed">
                         {categorie.description || "—"}
@@ -87,15 +129,35 @@ export function CategoriesPage() {
                     <Text size="sm" fw={800} c="dimmed">
                       {count} médicaments
                     </Text>
+                    <Group gap="xs" wrap="nowrap">
+                      <ActionIcon variant="light" color="teal" onClick={() => handleEdit(categorie)} aria-label="Modifier">
+                        <Pencil size={16} />
+                      </ActionIcon>
+                      <ActionIcon
+                        variant="light"
+                        color="red"
+                        onClick={() => handleDelete(categorie, count)}
+                        loading={isDeleting}
+                        aria-label="Supprimer"
+                      >
+                        <Trash2 size={16} />
+                      </ActionIcon>
+                    </Group>
                   </Group>
                 );
               })}
             </Stack>
           )}
+
+          {deleteCategorie.isError && (
+            <Alert color="red" icon={<AlertTriangle size={18} />} mt="md">
+              {(deleteCategorie.error as ApiError).message}
+            </Alert>
+          )}
         </Card>
 
         <Card component="form" onSubmit={handleSubmit} withBorder radius="md" padding="lg" shadow="sm">
-          <SectionTitle icon={Plus} title="Nouvelle catégorie" />
+          <SectionTitle icon={editingId !== null ? Pencil : Plus} title={editingId !== null ? "Modifier la catégorie" : "Nouvelle catégorie"} />
           <Stack>
             <TextInput
               label="Nom*"
@@ -103,29 +165,36 @@ export function CategoriesPage() {
               value={draft.nom}
               onChange={(event) => setDraft({ ...draft, nom: event.currentTarget.value })}
               placeholder="Dermatologie"
-              disabled={createCategorie.isPending}
+              disabled={isPending}
             />
             <Textarea
               label="Description"
               value={draft.description}
               onChange={(event) => setDraft({ ...draft, description: event.currentTarget.value })}
               minRows={4}
-              disabled={createCategorie.isPending}
+              disabled={isPending}
             />
 
-            {createCategorie.isError && (
+            {submitError && (
               <Alert color="red" icon={<AlertTriangle size={18} />}>
-                {(createCategorie.error as ApiError).message}
+                {submitError.message}
               </Alert>
             )}
 
-            <Button
-              type="submit"
-              leftSection={createCategorie.isPending ? <Loader size={14} color="white" /> : <Save size={17} />}
-              disabled={createCategorie.isPending || !draft.nom.trim()}
-            >
-              {createCategorie.isPending ? "Enregistrement…" : "Enregistrer"}
-            </Button>
+            <Group justify="flex-end">
+              {editingId !== null && (
+                <Button variant="default" leftSection={<X size={15} />} onClick={handleCancelEdit} type="button" disabled={isPending}>
+                  Annuler
+                </Button>
+              )}
+              <Button
+                type="submit"
+                leftSection={isPending ? <Loader size={14} color="white" /> : <Save size={17} />}
+                disabled={isPending || !draft.nom.trim()}
+              >
+                {isPending ? "Enregistrement…" : editingId !== null ? "Mettre à jour" : "Enregistrer"}
+              </Button>
+            </Group>
           </Stack>
         </Card>
       </SimpleGrid>
