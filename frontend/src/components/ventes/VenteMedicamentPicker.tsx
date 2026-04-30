@@ -37,7 +37,7 @@ export function VenteMedicamentPicker({
         )}
         {medicines.map((medicine) => {
           const inCart = quantities.get(medicine.id) ?? 0;
-          const lowStock = medicine.stock_actuel <= medicine.stock_minimum;
+          const lowStock = medicine.est_en_alerte;
           return (
             <Group key={medicine.id} className="sale-product-row" justify="space-between" wrap="nowrap">
               <div>
