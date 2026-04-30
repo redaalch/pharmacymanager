@@ -1,6 +1,21 @@
 # User stories
 
+> Document redige au debut du projet pour cadrer le MVP. Mis a jour le 2026-04-30 : les 10 stories sont livrees et verifiees manuellement.
+
 Ces user stories couvrent le MVP demande dans le brief. Elles sont ecrites simplement pour guider le developpement, pas pour remplir un outil Agile.
+
+| ID | Titre | Statut |
+| --- | --- | --- |
+| US-01 | Consulter le catalogue de medicaments | ✅ Livree |
+| US-02 | Ajouter un medicament | ✅ Livree |
+| US-03 | Modifier ou archiver un medicament | ✅ Livree |
+| US-04 | Gerer les categories | ✅ Livree |
+| US-05 | Voir les alertes de stock | ✅ Livree |
+| US-06 | Creer une vente | ✅ Livree |
+| US-07 | Annuler une vente | ✅ Livree |
+| US-08 | Consulter l'historique des ventes | ✅ Livree |
+| US-09 | Utiliser Swagger pour tester l'API | ✅ Livree |
+| US-10 | Connecter le frontend a l'API | ✅ Livree |
 
 ## US-01 - Consulter le catalogue de medicaments
 
@@ -108,7 +123,7 @@ En tant que pharmacien, je veux utiliser l'interface React avec les vraies donne
 
 Critères d'acceptation :
 
-- L'URL de l'API vient de `VITE_API_BASE_URL`.
+- L'URL de l'API vient de `VITE_API_URL`.
 - Les appels passent par `src/api/`.
 - Les pages gerent les etats loading, error et empty state.
 - La creation de vente depuis le frontend met a jour les stocks apres rechargement des donnees.

@@ -1,5 +1,7 @@
 # Definition of Done
 
+> Contrat redige au debut du projet et applique a chaque tache du backlog. Mis a jour le 2026-04-30, tous les criteres ci-dessous sont satisfaits sur la version finale livree.
+
 Cette Definition of Done est volontairement courte. Pour ce projet, je veux surtout eviter les taches "presque finies" : code ecrit mais non teste, Swagger oublie, ou README pas a jour.
 
 Une tache est terminee seulement si les points ci-dessous sont vrais.

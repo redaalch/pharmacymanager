@@ -1,5 +1,7 @@
 # Sprint 1 - Backend MVP
 
+> Document redige au debut du sprint. Mis a jour le 2026-04-30 avec un bilan a la fin.
+
 Ce sprint sert a poser la base solide du projet. Le frontend existe deja comme prototype local, donc la prochaine vraie valeur est le backend : modeles, API REST, logique de stock et Swagger.
 
 ## Objectif du sprint
@@ -15,7 +17,7 @@ Livrer une premiere version backend utilisable de PharmaManager avec :
 
 ## Duree proposee
 
-1 à 2 jours de travail, selon le temps disponible.
+1 a 2 jours de travail, selon le temps disponible.
 
 Ce n'est pas un sprint Scrum strict. C'est plutot une petite iteration de stage : une liste claire, un objectif clair, et une verification a la fin.
 
@@ -61,3 +63,28 @@ Ces points sont importants, mais je les garde pour apres le backend MVP :
 - Swagger doit etre ecrit au fur et a mesure, sinon il devient facile de l'oublier a la fin.
 - Le projet ne doit pas rester un prototype frontend : le backend est le coeur de l'evaluation.
 
+## Bilan du sprint (2026-04-30)
+
+Tous les criteres de reussite sont valides en local. Le sprint 1 est cloture.
+
+Ce qui a ete livre :
+
+- Backend Django + DRF + PostgreSQL avec settings splittes (`config/settings/base.py` + `local.py`).
+- Trois apps : `categories`, `medicaments`, `ventes` avec ViewSets, serializers et migrations propres.
+- Endpoint `/api/v1/medicaments/alertes/` qui filtre via `F("stock_minimum")`.
+- Creation de vente atomique (`transaction.atomic` + `select_for_update`) avec snapshot du prix.
+- Annulation de vente idempotente (un deuxieme appel renvoie 400).
+- Swagger enrichi avec `OpenApiExample` request + response et codes 400 / 404.
+- Fixture `seed.json` rechargee via `loaddata seed`.
+- 6 tests `APITestCase` qui verifient la deduction de stock, la reintegration et le rejet du stock insuffisant.
+
+Imprevus rencontres :
+
+- Le `MedicamentManager` cache par defaut les medicaments soft-deletes : il a fallu ajouter `all_objects` pour la logique d'annulation qui peut toucher des medicaments archives.
+- `loaddata` doit etre tolerant aux relances en mode Docker : la commande dans le compose tolere l'echec si les donnees existent deja.
+
+Ce qui a ete repousse au sprint suivant :
+
+- Connexion du frontend a l'API (sprint 2, deja realise).
+- Docker Compose et Dockerfiles (livre dans la phase finition).
+- Tests cote frontend (non couverts dans cette iteration).
