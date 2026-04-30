@@ -2,16 +2,60 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema, extend_schema_view
 
 from .models import Vente
 from .serializers import VenteCreateSerializer, VenteSerializer
 
+VENTE_EXAMPLE = OpenApiExample(
+    "Vente",
+    value={
+        "id": 1,
+        "reference": "VNT-2026-0001",
+        "date_vente": "2026-04-30T13:00:00+01:00",
+        "total_ttc": "30.00",
+        "statut": "completee",
+        "notes": "Vente comptoir",
+        "lignes": [
+            {
+                "id": 1,
+                "medicament": 1,
+                "medicament_nom": "Amoxicilline",
+                "quantite": 2,
+                "prix_unitaire": "15.00",
+                "sous_total": "30.00",
+            }
+        ],
+    },
+    response_only=True,
+)
+VENTE_REQUEST_EXAMPLE = OpenApiExample(
+    "Création vente",
+    value={"notes": "Vente comptoir", "lignes": [{"medicament_id": 1, "quantite": 2}]},
+    request_only=True,
+)
+VALIDATION_ERROR = OpenApiResponse(description="Données invalides ou stock insuffisant.")
+NOT_FOUND_ERROR = OpenApiResponse(description="Vente introuvable.")
+
 
 @extend_schema_view(
-    list=extend_schema(summary="Historique des ventes", tags=["Ventes"]),
-    retrieve=extend_schema(summary="Détail d'une vente", tags=["Ventes"]),
-    create=extend_schema(summary="Créer une vente avec ses lignes", tags=["Ventes"]),
+    list=extend_schema(
+        summary="Historique des ventes",
+        tags=["Ventes"],
+        examples=[VENTE_EXAMPLE],
+    ),
+    retrieve=extend_schema(
+        summary="Détail d'une vente",
+        tags=["Ventes"],
+        examples=[VENTE_EXAMPLE],
+        responses={200: VenteSerializer, 404: NOT_FOUND_ERROR},
+    ),
+    create=extend_schema(
+        summary="Créer une vente avec ses lignes",
+        tags=["Ventes"],
+        examples=[VENTE_REQUEST_EXAMPLE, VENTE_EXAMPLE],
+        responses={201: VenteSerializer, 400: VALIDATION_ERROR},
+    ),
 )
 class VenteViewSet(viewsets.ModelViewSet):
     """Création, consultation, et annulation des ventes."""
@@ -36,7 +80,16 @@ class VenteViewSet(viewsets.ModelViewSet):
             qs = qs.filter(date_vente__date__lte=date_max)
         return qs
 
-    @extend_schema(summary="Annuler une vente (réintègre le stock)", tags=["Ventes"])
+    @extend_schema(
+        summary="Annuler une vente (réintègre le stock)",
+        tags=["Ventes"],
+        examples=[VENTE_EXAMPLE],
+        responses={
+            200: VenteSerializer,
+            400: OpenApiResponse(description="La vente est déjà annulée."),
+            404: NOT_FOUND_ERROR,
+        },
+    )
     @action(detail=True, methods=["post"], url_path="annuler")
     def annuler(self, request, pk=None):
         vente = self.get_object()
