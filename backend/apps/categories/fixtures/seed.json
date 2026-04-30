@@ -9,6 +9,51 @@
   }
 },
 {
+  "model": "categories.categorie",
+  "pk": 2,
+  "fields": {
+    "nom": "Antalgique",
+    "description": "Traitement de la douleur et de la fièvre",
+    "date_creation": "2026-04-30T11:23:02.207Z"
+  }
+},
+{
+  "model": "categories.categorie",
+  "pk": 3,
+  "fields": {
+    "nom": "Anti-inflammatoire",
+    "description": "Réduction de l'inflammation et des douleurs associées",
+    "date_creation": "2026-04-30T11:24:02.207Z"
+  }
+},
+{
+  "model": "categories.categorie",
+  "pk": 4,
+  "fields": {
+    "nom": "Antihistaminique",
+    "description": "Traitement des allergies saisonnières et cutanées",
+    "date_creation": "2026-04-30T11:25:02.207Z"
+  }
+},
+{
+  "model": "categories.categorie",
+  "pk": 5,
+  "fields": {
+    "nom": "Gastro-entérologie",
+    "description": "Troubles digestifs, reflux, diarrhées et nausées",
+    "date_creation": "2026-04-30T11:26:02.207Z"
+  }
+},
+{
+  "model": "categories.categorie",
+  "pk": 6,
+  "fields": {
+    "nom": "Vitamines",
+    "description": "Compléments vitaminiques et minéraux",
+    "date_creation": "2026-04-30T11:27:02.207Z"
+  }
+},
+{
   "model": "medicaments.medicament",
   "pk": 1,
   "fields": {
@@ -31,18 +76,265 @@
   "model": "medicaments.medicament",
   "pk": 2,
   "fields": {
-    "nom": "Amoxicilline",
-    "dci": "Amoxicilline",
+    "nom": "Azithromycine",
+    "dci": "Azithromycine",
     "categorie": 1,
     "forme": "comprimé",
     "dosage": "500mg",
-    "prix_achat": "10.00",
-    "prix_vente": "15.00",
-    "stock_actuel": 3,
-    "stock_minimum": 10,
-    "date_expiration": "2027-01-01",
+    "prix_achat": "32.00",
+    "prix_vente": "45.00",
+    "stock_actuel": 18,
+    "stock_minimum": 8,
+    "date_expiration": "2027-08-15",
     "ordonnance_requise": true,
     "date_creation": "2026-04-30T11:28:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 3,
+  "fields": {
+    "nom": "Cefixime",
+    "dci": "Céfixime",
+    "categorie": 1,
+    "forme": "gélule",
+    "dosage": "200mg",
+    "prix_achat": "38.00",
+    "prix_vente": "55.00",
+    "stock_actuel": 7,
+    "stock_minimum": 7,
+    "date_expiration": "2027-10-30",
+    "ordonnance_requise": true,
+    "date_creation": "2026-04-30T11:29:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 4,
+  "fields": {
+    "nom": "Paracétamol",
+    "dci": "Paracétamol",
+    "categorie": 2,
+    "forme": "comprimé",
+    "dosage": "500mg",
+    "prix_achat": "4.00",
+    "prix_vente": "7.00",
+    "stock_actuel": 120,
+    "stock_minimum": 25,
+    "date_expiration": "2028-02-28",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:30:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 5,
+  "fields": {
+    "nom": "Doliprane",
+    "dci": "Paracétamol",
+    "categorie": 2,
+    "forme": "sachet",
+    "dosage": "1000mg",
+    "prix_achat": "8.50",
+    "prix_vente": "12.00",
+    "stock_actuel": 14,
+    "stock_minimum": 15,
+    "date_expiration": "2027-12-10",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:31:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 6,
+  "fields": {
+    "nom": "Ibuprofène",
+    "dci": "Ibuprofène",
+    "categorie": 3,
+    "forme": "comprimé",
+    "dosage": "400mg",
+    "prix_achat": "9.00",
+    "prix_vente": "14.00",
+    "stock_actuel": 40,
+    "stock_minimum": 12,
+    "date_expiration": "2027-09-20",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:32:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 7,
+  "fields": {
+    "nom": "Diclofénac",
+    "dci": "Diclofénac",
+    "categorie": 3,
+    "forme": "gel",
+    "dosage": "1%",
+    "prix_achat": "12.00",
+    "prix_vente": "19.00",
+    "stock_actuel": 22,
+    "stock_minimum": 10,
+    "date_expiration": "2027-06-18",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:33:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 8,
+  "fields": {
+    "nom": "Cétirizine",
+    "dci": "Cétirizine",
+    "categorie": 4,
+    "forme": "comprimé",
+    "dosage": "10mg",
+    "prix_achat": "7.00",
+    "prix_vente": "11.00",
+    "stock_actuel": 35,
+    "stock_minimum": 10,
+    "date_expiration": "2028-01-25",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:34:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 9,
+  "fields": {
+    "nom": "Loratadine",
+    "dci": "Loratadine",
+    "categorie": 4,
+    "forme": "comprimé",
+    "dosage": "10mg",
+    "prix_achat": "6.50",
+    "prix_vente": "10.00",
+    "stock_actuel": 8,
+    "stock_minimum": 12,
+    "date_expiration": "2027-05-30",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:35:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 10,
+  "fields": {
+    "nom": "Oméprazole",
+    "dci": "Oméprazole",
+    "categorie": 5,
+    "forme": "gélule",
+    "dosage": "20mg",
+    "prix_achat": "11.00",
+    "prix_vente": "17.00",
+    "stock_actuel": 50,
+    "stock_minimum": 15,
+    "date_expiration": "2028-03-12",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:36:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 11,
+  "fields": {
+    "nom": "Dompéridone",
+    "dci": "Dompéridone",
+    "categorie": 5,
+    "forme": "comprimé",
+    "dosage": "10mg",
+    "prix_achat": "13.00",
+    "prix_vente": "20.00",
+    "stock_actuel": 9,
+    "stock_minimum": 10,
+    "date_expiration": "2027-04-10",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:37:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 12,
+  "fields": {
+    "nom": "Smecta",
+    "dci": "Diosmectite",
+    "categorie": 5,
+    "forme": "sachet",
+    "dosage": "3g",
+    "prix_achat": "18.00",
+    "prix_vente": "27.00",
+    "stock_actuel": 28,
+    "stock_minimum": 12,
+    "date_expiration": "2027-11-22",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:38:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 13,
+  "fields": {
+    "nom": "Vitamine C",
+    "dci": "Acide ascorbique",
+    "categorie": 6,
+    "forme": "comprimé effervescent",
+    "dosage": "1000mg",
+    "prix_achat": "16.00",
+    "prix_vente": "24.00",
+    "stock_actuel": 60,
+    "stock_minimum": 20,
+    "date_expiration": "2028-06-01",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:39:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 14,
+  "fields": {
+    "nom": "Magnésium B6",
+    "dci": "Magnésium + Pyridoxine",
+    "categorie": 6,
+    "forme": "comprimé",
+    "dosage": "48mg/5mg",
+    "prix_achat": "22.00",
+    "prix_vente": "34.00",
+    "stock_actuel": 16,
+    "stock_minimum": 10,
+    "date_expiration": "2028-04-15",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:40:18.583Z",
+    "est_actif": true
+  }
+},
+{
+  "model": "medicaments.medicament",
+  "pk": 15,
+  "fields": {
+    "nom": "Fer",
+    "dci": "Sulfate ferreux",
+    "categorie": 6,
+    "forme": "sirop",
+    "dosage": "50mg/5ml",
+    "prix_achat": "19.00",
+    "prix_vente": "29.00",
+    "stock_actuel": 5,
+    "stock_minimum": 8,
+    "date_expiration": "2027-07-05",
+    "ordonnance_requise": false,
+    "date_creation": "2026-04-30T11:41:18.583Z",
     "est_actif": true
   }
 }
