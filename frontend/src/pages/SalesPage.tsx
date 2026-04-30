@@ -1,57 +1,132 @@
-import { SimpleGrid } from "@mantine/core";
-import { SaleMedicinePicker } from "../components/sales/SaleMedicinePicker";
-import { SaleSummary } from "../components/sales/SaleSummary";
-import { SalesHistory } from "../components/sales/SalesHistory";
+import { Alert, SimpleGrid } from "@mantine/core";
+import { AlertTriangle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ApiError } from "../api";
 import { PageHeader } from "../components/PageHeader";
-import type { Medicine, Sale, SaleLine } from "../data/pharmacy";
+import { SaleMedicinePicker } from "../components/sales/SaleMedicinePicker";
+import { SaleSummary, type CartLine } from "../components/sales/SaleSummary";
+import { SalesHistory } from "../components/sales/SalesHistory";
+import { useMedicaments } from "../hooks/useMedicaments";
+import { useAnnulerVente, useCreateVente, useVentes } from "../hooks/useVentes";
 
-type SalesPageProps = {
-  medicines: Medicine[];
-  sales: Sale[];
-  search: string;
-  quantities: Record<string, number>;
-  notes: string;
-  cart: SaleLine[];
-  subtotal: number;
-  vat: number;
-  total: number;
-  onSearchChange: (value: string) => void;
-  onQuantityChange: (medicineId: string, delta: number) => void;
-  onNotesChange: (value: string) => void;
-  onCompleteSale: () => void;
-  onCancelSale: (saleId: string) => void;
-};
+export function SalesPage() {
+  const [search, setSearch] = useState("");
+  const [notes, setNotes] = useState("");
+  const [quantities, setQuantities] = useState<Map<number, number>>(new Map());
 
-export function SalesPage({
-  medicines,
-  sales,
-  search,
-  quantities,
-  notes,
-  cart,
-  subtotal,
-  vat,
-  total,
-  onSearchChange,
-  onQuantityChange,
-  onNotesChange,
-  onCompleteSale,
-  onCancelSale,
-}: SalesPageProps) {
-  const normalizedSearch = search.toLowerCase();
-  const filteredMedicines = medicines.filter((medicine) => medicine.name.toLowerCase().includes(normalizedSearch) || medicine.dci.toLowerCase().includes(normalizedSearch));
-  const filteredSales = sales.filter((sale) => sale.reference.toLowerCase().includes(normalizedSearch) || sale.notes.toLowerCase().includes(normalizedSearch));
+  const medicamentsQuery = useMedicaments({ search: search.trim() || undefined });
+  const ventesQuery = useVentes();
+  const createVente = useCreateVente();
+  const annulerVente = useAnnulerVente();
+
+  const medicaments = medicamentsQuery.data?.results ?? [];
+  const sales = ventesQuery.data?.results ?? [];
+
+  const cart = useMemo<CartLine[]>(() => {
+    const lines: CartLine[] = [];
+    quantities.forEach((quantite, medicamentId) => {
+      if (quantite <= 0) return;
+      const medicament = medicaments.find((m) => m.id === medicamentId);
+      if (!medicament) return;
+      const prixUnitaire = Number(medicament.prix_vente);
+      lines.push({
+        medicamentId,
+        nom: medicament.nom,
+        quantite,
+        prixUnitaire,
+        sousTotal: prixUnitaire * quantite,
+      });
+    });
+    return lines;
+  }, [quantities, medicaments]);
+
+  const total = cart.reduce((sum, line) => sum + line.sousTotal, 0);
+
+  function handleQuantityChange(medicamentId: number, delta: number) {
+    setQuantities((prev) => {
+      const next = new Map(prev);
+      const current = next.get(medicamentId) ?? 0;
+      const updated = Math.max(0, current + delta);
+      if (updated === 0) {
+        next.delete(medicamentId);
+      } else {
+        next.set(medicamentId, updated);
+      }
+      return next;
+    });
+  }
+
+  function handleCompleteSale() {
+    if (cart.length === 0) return;
+    createVente.mutate(
+      {
+        notes: notes.trim() || undefined,
+        lignes: cart.map((line) => ({
+          medicament_id: line.medicamentId,
+          quantite: line.quantite,
+        })),
+      },
+      {
+        onSuccess: () => {
+          setQuantities(new Map());
+          setNotes("");
+        },
+      },
+    );
+  }
+
+  function handleCancelSale(saleId: number) {
+    if (!confirm("Annuler cette vente ? Le stock sera réintégré.")) return;
+    annulerVente.mutate(saleId);
+  }
 
   return (
     <>
-      <PageHeader eyebrow="Comptoir" title="Nouvelle vente" description="Ajoutez les articles, calculez le TTC et déduisez le stock sans backend." />
+      <PageHeader
+        eyebrow="Comptoir"
+        title="Nouvelle vente"
+        description="Sélectionnez les articles, le stock est déduit automatiquement à l'enregistrement."
+      />
+
+      {medicamentsQuery.isError && (
+        <Alert color="red" icon={<AlertTriangle size={18} />} mb="md">
+          Impossible de charger le catalogue : {(medicamentsQuery.error as ApiError).message}
+        </Alert>
+      )}
 
       <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md" mb="md">
-        <SaleMedicinePicker medicines={filteredMedicines} search={search} quantities={quantities} onSearchChange={onSearchChange} onQuantityChange={onQuantityChange} />
-        <SaleSummary cart={cart} notes={notes} subtotal={subtotal} vat={vat} total={total} onNotesChange={onNotesChange} onCompleteSale={onCompleteSale} />
+        <SaleMedicinePicker
+          medicines={medicaments}
+          search={search}
+          quantities={quantities}
+          onSearchChange={setSearch}
+          onQuantityChange={handleQuantityChange}
+        />
+        <SaleSummary
+          cart={cart}
+          notes={notes}
+          total={total}
+          isSubmitting={createVente.isPending}
+          error={(createVente.error as ApiError) ?? null}
+          onNotesChange={setNotes}
+          onCompleteSale={handleCompleteSale}
+        />
       </SimpleGrid>
 
-      <SalesHistory sales={filteredSales} onCancelSale={onCancelSale} />
+      <SalesHistory
+        sales={sales}
+        isLoading={ventesQuery.isLoading}
+        isError={ventesQuery.isError}
+        error={(ventesQuery.error as ApiError) ?? null}
+        cancelling={annulerVente.isPending ? annulerVente.variables ?? null : null}
+        onCancelSale={handleCancelSale}
+      />
+
+      {annulerVente.isError && (
+        <Alert color="red" icon={<AlertTriangle size={18} />} mt="md">
+          {(annulerVente.error as ApiError).message}
+        </Alert>
+      )}
     </>
   );
 }

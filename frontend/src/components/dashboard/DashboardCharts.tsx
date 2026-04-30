@@ -1,23 +1,56 @@
 import { Group, SimpleGrid, Text } from "@mantine/core";
 import { BarChart3, LayoutGrid } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import type { Category, Medicine, Sale } from "../../data/pharmacy";
-import { buildCategoryChart, buildRevenueChart, formatCurrency } from "../../utils/pharmacy";
+import type { Categorie, Medicament, Vente } from "../../api";
+import { formatCurrency } from "../../utils/format";
 import { DashboardCard } from "./DashboardCard";
 
+const PALETTE = ["#0fb7a7", "#2563eb", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6", "#ec4899", "#10b981"];
+
 type DashboardChartsProps = {
-  medicines: Medicine[];
-  categories: Category[];
-  sales: Sale[];
+  medicaments: Medicament[];
+  categories: Categorie[];
+  ventes: Vente[];
 };
 
-export function DashboardCharts({ medicines, categories, sales }: DashboardChartsProps) {
-  const revenueChart = buildRevenueChart(sales);
-  const categoryChart = buildCategoryChart(medicines, categories);
+function buildRevenueChart(ventes: Vente[]) {
+  const days: { date: Date; label: string; total: number }[] = [];
+  const fmt = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit" });
+  for (let offset = 6; offset >= 0; offset -= 1) {
+    const date = new Date();
+    date.setDate(date.getDate() - offset);
+    date.setHours(0, 0, 0, 0);
+    days.push({ date, label: fmt.format(date), total: 0 });
+  }
+  ventes
+    .filter((vente) => vente.statut === "completee")
+    .forEach((vente) => {
+      const venteDate = new Date(vente.date_vente);
+      venteDate.setHours(0, 0, 0, 0);
+      const day = days.find((d) => d.date.getTime() === venteDate.getTime());
+      if (day) day.total += Number(vente.total_ttc);
+    });
+  return days.map(({ label, total }) => ({ label, value: total }));
+}
+
+function buildCategoryChart(medicaments: Medicament[], categories: Categorie[]) {
+  const rows = categories
+    .map((categorie, index) => ({
+      name: categorie.nom,
+      value: medicaments.filter((m) => m.categorie?.id === categorie.id).length,
+      color: PALETTE[index % PALETTE.length],
+    }))
+    .filter((row) => row.value > 0);
+  return rows.length ? rows : [{ name: "Aucun stock", value: 1, color: "#cbd5e1" }];
+}
+
+export function DashboardCharts({ medicaments, categories, ventes }: DashboardChartsProps) {
+  const revenueChart = buildRevenueChart(ventes);
+  const categoryChart = buildCategoryChart(medicaments, categories);
 
   return (
     <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md" mb="md">
-      <DashboardCard title="Ventes récentes" icon={BarChart3}>
+      <DashboardCard title="Ventes des 7 derniers jours" icon={BarChart3}>
         <div className="chart-box">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={revenueChart} margin={{ top: 10, right: 8, bottom: 0, left: -18 }}>

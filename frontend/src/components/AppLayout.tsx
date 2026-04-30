@@ -8,35 +8,25 @@ import {
   NavLink,
   rem,
   Text,
-  TextInput,
   ThemeIcon,
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Bell, ChevronDown, Pill, Plus, Search, ShoppingCart } from "lucide-react";
+import { Bell, ChevronDown, Pill, Plus, ShoppingCart } from "lucide-react";
 import type { ReactNode } from "react";
-import type { NavItem, Page } from "../data/pharmacy";
+import { navItems, type Page } from "../config/navigation";
+import { useAlertesStock } from "../hooks/useMedicaments";
 
 type AppLayoutProps = {
   page: Page;
-  navItems: NavItem[];
-  alertCount: number;
-  searchValue: string;
   children: ReactNode;
   onPageChange: (page: Page) => void;
-  onSearchChange: (value: string) => void;
 };
 
-export function AppLayout({
-  page,
-  navItems,
-  alertCount,
-  searchValue,
-  children,
-  onPageChange,
-  onSearchChange,
-}: AppLayoutProps) {
+export function AppLayout({ page, children, onPageChange }: AppLayoutProps) {
   const [opened, { toggle, close }] = useDisclosure();
+  const alertesQuery = useAlertesStock();
+  const alertCount = alertesQuery.data?.count ?? 0;
 
   function navigate(nextPage: Page) {
     onPageChange(nextPage);
@@ -52,16 +42,11 @@ export function AppLayout({
     >
       <AppShell.Header className="app-header">
         <Group h="100%" justify="space-between" wrap="nowrap" className="topbar-container">
-          <Group gap="md" className="header-search-wrap">
+          <Group gap="md">
             <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" aria-label="Menu" />
-            <TextInput
-              leftSection={<Search size={17} />}
-              placeholder="Rechercher (médicament, DCI, catégorie...)"
-              value={searchValue}
-              onChange={(event) => onSearchChange(event.currentTarget.value)}
-              className="header-search"
-              radius="md"
-            />
+            <Text fw={900} size="lg" hiddenFrom="md">
+              PharmaManager
+            </Text>
           </Group>
 
           <Group gap="sm" wrap="nowrap">
