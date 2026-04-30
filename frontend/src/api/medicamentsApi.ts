@@ -12,7 +12,7 @@ export type Medicament = {
   prix_vente: string;
   stock_actuel: number;
   stock_minimum: number;
-  stock_bas: boolean;
+  est_en_alerte: boolean;
   date_expiration: string;
   ordonnance_requise: boolean;
   date_creation: string;
