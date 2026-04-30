@@ -14,9 +14,11 @@ multi-articles avec déduction atomique du stock, et des alertes de réapprovisi
 ## Structure du dépôt
 
     pharmacymanager/
-    ├── backend/          # API Django REST
-    ├── frontend/         # Application React
-    └── docs/             # Brief technique et documents projet
+    ├── backend/                  # API Django REST
+    │   ├── config/settings/      # base.py + local.py
+    │   └── apps/                 # categories, medicaments, ventes
+    ├── frontend/                 # Application React
+    └── docs/                     # Brief technique et documents projet
 
 ## Pré-requis
 
