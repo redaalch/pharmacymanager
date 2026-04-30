@@ -11,6 +11,14 @@ multi-articles avec déduction atomique du stock, et des alertes de réapprovisi
 - **Frontend** — React (Vite + TypeScript) · Axios · React Query
 - **Documentation API** — Swagger UI sur `/api/schema/swagger-ui/`
 
+## Architecture
+
+L'architecture complète est documentée dans [docs/architecture/](docs/architecture/README.md)
+avec sept diagrammes (system context, container, ERD, séquences vente/annulation,
+flux d'alertes stock, vue d'ensemble API).
+
+![System Context Diagram](docs/architecture/diagrams/01-system-context-diagram.png)
+
 ## Structure du dépôt
 
     pharmacymanager/
@@ -18,7 +26,9 @@ multi-articles avec déduction atomique du stock, et des alertes de réapprovisi
     │   ├── config/settings/      # base.py + local.py
     │   └── apps/                 # categories, medicaments, ventes
     ├── frontend/                 # Application React
-    └── docs/                     # Brief technique et documents projet
+    └── docs/                     # Brief technique, agile, architecture
+        ├── agile/                # backlog, user stories, sprint plan, DoD
+        └── architecture/         # diagrammes system design (PNG)
 
 ## Pré-requis
 
@@ -150,6 +160,14 @@ curl -X POST http://127.0.0.1:8000/api/v1/ventes/ \
   -H "Content-Type: application/json" \
   -d '{"lignes":[{"medicament_id":1,"quantite":2}]}'
 ~~~
+
+
+## Design & Maquettes
+
+Maquettes Figma : <https://www.figma.com/design/Cz9P3rX4kZd0ggDU1KpubQ/pharmacie?node-id=3-143>
+
+L'interface a été pensée d'abord dans Figma, puis implémentée avec Mantine
+en respectant les choix de couleurs, hiérarchie et composants définis dans la maquette.
 
 ## Auteur
 
