@@ -72,15 +72,7 @@ export default function App() {
         />
       )}
 
-      {pharmacy.page === "categories" && (
-        <CategoriesPage
-          categories={pharmacy.categories}
-          medicines={pharmacy.activeMedicines}
-          draft={pharmacy.categoryDraft}
-          onDraftChange={pharmacy.setCategoryDraft}
-          onSave={pharmacy.handleSaveCategory}
-        />
-      )}
+      {pharmacy.page === "categories" && <CategoriesPage />}
       {pharmacy.page === "alerts" && (
         <AlertsPage lowStock={pharmacy.lowStock} expiringSoon={pharmacy.expiringSoon} categories={pharmacy.categories} onEditMedicine={pharmacy.handleEditMedicine} />
       )}
