@@ -1,49 +1,50 @@
-# PharmaManager Frontend
+# PharmaManager
 
-Frontend-only pharmacy management dashboard built with React, Vite, TypeScript, Mantine, Recharts and lucide-react.
+Application de gestion de pharmacie — MVP développé pour le test technique SMARTHOLOL.
 
-There is no backend in this version. Demo data is stored in `localStorage`, so the app behaves like a real interface while staying fully client-side.
+Permet la gestion complète du catalogue de médicaments, des catégories, des ventes
+multi-articles avec déduction atomique du stock, et des alertes de réapprovisionnement.
 
-## Features
+## Stack
 
-- Dashboard with stock KPIs, sales totals, charts, low-stock alerts and expiry alerts
-- Medicines page with search, filters, add/edit form, stock status and soft archive
-- Sales page with cart quantities, TTC calculation, sale history and sale cancellation with stock restore
-- Categories, alerts and settings screens for a complete navigation flow
-- Mantine AppShell layout and responsive UI components
+- **Backend** — Django 5 · Django REST Framework · PostgreSQL · drf-spectacular
+- **Frontend** — React (Vite + TypeScript) · Axios · React Query
+- **Documentation API** — Swagger UI sur `/api/schema/swagger-ui/`
 
-## Project Structure
+## Structure du dépôt
 
-```text
-src/
-  components/   Shared layout and UI helpers
-  data/         Demo domain data and TypeScript domain types
-  hooks/        Reusable React hooks
-  pages/        Feature pages
-  styles/       Product-specific CSS on top of Mantine
-  utils/        Formatting and pharmacy business helpers
-```
 
-## Run Locally
+## Pré-requis
+
+- Python 3.10+
+- Node.js 18+
+- PostgreSQL 14+ (ou Docker)
+
+## Installation Backend
 
 ```bash
-npm install
-npm run dev
-```
+cd backend
 
-Vite prints the local URL in the terminal, usually:
+# 1. Environnement virtuel
+python -m venv venv
+source venv/bin/activate          # Linux/Mac
+# venv\Scripts\activate           # Windows
 
-```text
-http://localhost:5173/
-```
+# 2. Dépendances
+pip install -r requirements.txt
 
-## Quality Checks
+# 3. Variables d'environnement
+cp .env.example .env
+# éditer .env avec vos identifiants Postgres
 
-```bash
-npm run typecheck
-npm run build
-```
+# 4. Base de données (option Docker)
+docker run -d --name pharma-pg \
+  -e POSTGRES_DB=pharma -e POSTGRES_USER=pharma -e POSTGRES_PASSWORD=pharma_dev \
+  -p 5432:5432 postgres:16
 
-## Notes
+# 5. Migrations et données de démo
+python manage.py migrate
+python manage.py loaddata seed
 
-The technical brief is kept in [docs/technical-brief.pdf](docs/technical-brief.pdf). When a backend is added later, replace the `localStorage` state layer with API calls for medicines, categories and sales.
+# 6. Lancer le serveur
+python manage.py runserver
