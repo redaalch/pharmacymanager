@@ -61,5 +61,5 @@ export function draftToInput(draft: MedicamentDraft): MedicamentInput {
 }
 
 export function isDraftValid(draft: MedicamentDraft): boolean {
-  return Boolean(draft.nom.trim() && draft.dci.trim() && draft.categorie_id !== null && draft.date_expiration);
+  return Boolean(draft.nom.trim() && draft.categorie_id !== null && draft.date_expiration);
 }

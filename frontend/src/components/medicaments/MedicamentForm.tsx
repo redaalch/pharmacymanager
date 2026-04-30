@@ -79,7 +79,7 @@ export function MedicamentForm({ categories, editing, onCancel, onSuccess }: Med
 
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
         <TextInput required label="Nom*" value={draft.nom} onChange={(e) => updateField("nom", e.currentTarget.value)} placeholder="Amoxicilline 1g" />
-        <TextInput required label="DCI*" value={draft.dci} onChange={(e) => updateField("dci", e.currentTarget.value)} placeholder="Amoxicilline" />
+        <TextInput label="DCI" value={draft.dci} onChange={(e) => updateField("dci", e.currentTarget.value)} placeholder="Amoxicilline" />
         <Select
           required
           label="Catégorie*"

@@ -24,6 +24,43 @@ multi-articles avec déduction atomique du stock, et des alertes de réapprovisi
 - Node.js 18+
 - PostgreSQL 14+ (ou Docker)
 
+## Démarrage Docker Compose
+
+Pour lancer PostgreSQL, l'API Django et le frontend Vite en une commande :
+
+~~~bash
+docker compose up --build
+~~~
+
+Si votre installation Docker exige les droits administrateur, utilisez `sudo docker compose up --build`.
+
+Le backend applique les migrations et recharge les données de démonstration au démarrage.
+
+- Frontend : `http://localhost:5173`
+- API : `http://127.0.0.1:8000/api/v1/`
+- Swagger : `http://127.0.0.1:8000/api/schema/swagger-ui/`
+- PostgreSQL exposé en local sur le port `5433` pour éviter les conflits avec une base locale sur `5432`.
+
+Pour arrêter et supprimer les volumes de développement :
+
+~~~bash
+docker compose down -v
+~~~
+
+## Variables d'Environnement
+
+Backend (`backend/.env`) :
+
+- `SECRET_KEY` — clé secrète Django.
+- `DEBUG` — `True` en développement, `False` en production.
+- `ALLOWED_HOSTS` — hôtes autorisés par Django, séparés par des virgules.
+- `CORS_ALLOWED_ORIGINS` — origines frontend autorisées, séparées par des virgules.
+- `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` — connexion PostgreSQL.
+
+Frontend (`frontend/.env`) :
+
+- `VITE_API_URL` — URL de l'API, par défaut `http://127.0.0.1:8000/api/v1`.
+
 ## Installation Backend
 
 ~~~bash
@@ -56,6 +93,14 @@ python manage.py runserver
 
 L'API est disponible sur `http://127.0.0.1:8000/api/v1/`.
 La documentation Swagger est sur `http://127.0.0.1:8000/api/schema/swagger-ui/`.
+
+## Tests Backend
+
+~~~bash
+cd backend
+source venv/bin/activate
+python manage.py test apps.medicaments apps.ventes
+~~~
 
 ## Installation Frontend
 

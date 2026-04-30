@@ -14,7 +14,11 @@ class Medicament(models.Model):
     """Médicament du catalogue de la pharmacie."""
 
     nom = models.CharField(max_length=200)
-    dci = models.CharField(max_length=200, help_text="Dénomination Commune Internationale")
+    dci = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Dénomination Commune Internationale",
+    )
     categorie = models.ForeignKey(
         Categorie, on_delete=models.PROTECT, related_name="medicaments"
     )
