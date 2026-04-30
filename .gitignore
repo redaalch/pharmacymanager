@@ -19,12 +19,26 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Editor / OS
-.vscode/
-.idea/
 *.swp
-.DS_Store
 Thumbs.db
 
 # Misc
 coverage/
 .cache/
+
+# python / django
+backend/venv/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/db.sqlite3
+backend/.env
+
+# node / vite
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
