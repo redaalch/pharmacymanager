@@ -1,3 +1,22 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema_view, extend_schema
 
-# Create your views here.
+from .models import Categorie
+from .serializers import CategorieSerializer
+
+
+@extend_schema_view(
+    list=extend_schema(summary="Liste des catégories", tags=["Catégories"]),
+    create=extend_schema(summary="Créer une catégorie", tags=["Catégories"]),
+    retrieve=extend_schema(summary="Détail d'une catégorie", tags=["Catégories"]),
+    update=extend_schema(summary="Modifier une catégorie", tags=["Catégories"]),
+    partial_update=extend_schema(summary="Modifier partiellement", tags=["Catégories"]),
+    destroy=extend_schema(summary="Supprimer une catégorie", tags=["Catégories"]),
+)
+class CategorieViewSet(viewsets.ModelViewSet):
+    """CRUD complet sur les catégories."""
+
+    queryset = Categorie.objects.all()
+    serializer_class = CategorieSerializer
+    search_fields = ["nom"]
+    ordering_fields = ["nom", "date_creation"]
